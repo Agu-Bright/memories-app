@@ -5,14 +5,16 @@ import { useGlobalContext } from "../../Context/appContext";
 import { Grid, CircularProgress } from "@mui/material";
 
 const Posts = ({ setCurrentId }) => {
-  const { posts } = useGlobalContext();
+  const { posts, isLoading } = useGlobalContext();
 
-  return !posts.length ? (
+  if (!posts.length && !isLoading) return "No Post";
+
+  return isLoading ? (
     <CircularProgress />
   ) : (
     <Grid container alignItems="stretch" spacing={3}>
       {posts.map((post) => (
-        <Grid item key={post._Id} xm={12} sm={6}>
+        <Grid item key={post._Id} xx={12} sm={12} md={6} lg={3}>
           <Post key={post._id} post={post} setCurrentId={setCurrentId} />
         </Grid>
       ))}

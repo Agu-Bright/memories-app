@@ -19,7 +19,10 @@ import {
   signUpUserError,
   fetchPostBySearchSuccess,
   setCurrentID,
-  setMountTrue,
+  setMount,
+  startLoading,
+  endLoading,
+  setPost,
 } from "./action.js";
 
 const AppContext = React.createContext();
@@ -33,15 +36,14 @@ export const initialState = {
   authData: {},
   currentId: "",
   mount: false,
+  currentPage: "",
+  numberOfPages: "",
+  isLoading: false,
+  post: null,
 };
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
-    dispatch(fetchPosts());
-  }, [dispatch, state.currentId, state.mount]);
-
-  //populate user
   useEffect(() => {
     const profile = localStorage.getItem("profile");
 
@@ -55,8 +57,9 @@ const AppProvider = ({ children }) => {
       }
     }
   }, []);
-  console.log(state.currentId);
+
   //USER_AUTHENTICATION
+  //signup
   const signUp = async (userInput, navigate) => {
     try {
       const { data } = await axios.post("/user/signUp", userInput);
@@ -73,6 +76,7 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  //signIn
   const signIn = async (formData, navigate) => {
     try {
       const { data } = await axios.post("/user/signIn", formData);
@@ -94,11 +98,25 @@ const AppProvider = ({ children }) => {
   };
 
   //fetch post
-  const fetchPosts = async () => {
+  const fetchPosts = async (page) => {
     try {
-      const { data } = await axios.get("/posts");
+      dispatch(startLoading());
+      const { data } = await axios.get(`/posts?page=${page}`);
       dispatch(getPost(data));
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //get post
+  const getSinglePost = async (id) => {
+    try {
+      dispatch(startLoading());
+      const { data } = await axios.get(`/posts/${id}`);
+      dispatch(setPost(data));
       console.log(data);
+      dispatch(endLoading());
     } catch (error) {
       console.log(error);
     }
@@ -107,15 +125,15 @@ const AppProvider = ({ children }) => {
   //Fetchpost by query string
   const fetchPostBySearch = async (searchQuery) => {
     try {
+      dispatch(startLoading());
       const { data } = await axios.get(
         `/posts/search?searchQuery=${searchQuery.search || "none"}&tags=${
           searchQuery.tags || "none"
         }`
       );
-      // dispatch(fetchPostBySearchSuccess(data));
-      console.log(data);
-      dispatch(setMountTrue());
-      console.log(data);
+      dispatch(fetchPostBySearchSuccess(data));
+      dispatch(setMount());
+      dispatch(endLoading());
     } catch (error) {
       console.log(error);
     }
@@ -124,9 +142,11 @@ const AppProvider = ({ children }) => {
   //create post
   const createPost = async (userInput) => {
     try {
+      dispatch(startLoading());
       const { data } = await axios.post("/posts", userInput);
       dispatch(createPostSuccess(data.post));
-      dispatch(setMountTrue());
+      dispatch(setMount());
+      dispatch(endLoading());
     } catch (error) {
       dispatch(createPostError(error));
       console.log(error);
@@ -134,8 +154,9 @@ const AppProvider = ({ children }) => {
   };
 
   //setCurrentId
-  const setCurrentIDD = async (id) => {
+  const setCurrentIDD = async (id, post) => {
     dispatch(setCurrentID(id));
+    console.log(post);
   };
 
   //updatePost
@@ -143,7 +164,7 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await axios.patch(`/posts/${id}`, postUpdate);
       dispatch(updatePostSuccess(data));
-      dispatch(setMountTrue());
+      dispatch(setMount());
     } catch (error) {
       dispatch(updatePostError(error));
     }
@@ -154,7 +175,7 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await axios.delete(`/posts/${id}`);
       dispatch(deletePostSuccess(data, id));
-      dispatch(setMountTrue());
+      dispatch(setMount());
     } catch (error) {
       dispatch(deletePostError(error));
     }
@@ -165,7 +186,7 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await axios.patch(`/posts/${id}/likePost`, id);
       dispatch(likePostSuccess(data));
-      dispatch(setMountTrue());
+      dispatch(setMount());
     } catch (error) {
       dispatch(likePostError(error));
     }
@@ -200,6 +221,7 @@ const AppProvider = ({ children }) => {
         signUpUserSuccess,
         fetchPostBySearch,
         setCurrentIDD,
+        getSinglePost,
       }}
     >
       {children}

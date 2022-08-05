@@ -20,18 +20,43 @@ export const createPost = async (req, res) => {
 
 //FETCHING_POSTS
 export const getPosts = async (req, res) => {
+  const { page } = req.query;
   try {
-    const postMessages = await PostMessage.find();
-    res.status(200).json(postMessages);
+    const LIMIT = 8; //This is the number of posts per page
+    const startIndex = (Number(page) - 1) * LIMIT; //This is the start index of a post in a specific page
+    const total = await PostMessage.countDocuments({});
+    const posts = await PostMessage.find()
+      .sort({ _id: -1 })
+      .limit(LIMIT)
+      .skip(startIndex);
+    res.status(200).json({
+      data: posts,
+      currentPage: Number(page),
+      numberOfPages: Math.ceil(total / LIMIT),
+    });
   } catch (error) {
     res.status(404).json({ message: "SERVER ERROR" });
     console.log(error);
   }
 };
 
+//GET SINGLE POST
+export const getPost = async (req, res) => {
+  console.log(req.params);
+  try {
+    const post = await PostMessage.findById(req.params.id);
+    console.log(post);
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(404).json({ message: "SERVER ERROR" });
+    console.log(error.stack);
+  }
+};
+
 //FETCHING_POSTS_BY_SEARCH
 export const getPostsBySearch = async (req, res) => {
   const { searchQuery, tags } = req.query;
+  console.log(searchQuery);
   try {
     const title = new RegExp(searchQuery, "i");
     const posts = await PostMessage.find({

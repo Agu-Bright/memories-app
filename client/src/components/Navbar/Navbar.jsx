@@ -6,6 +6,8 @@ import {
   Stack,
   Toolbar,
   Typography,
+  Box,
+  Card,
 } from "@mui/material";
 import decode from "jwt-decode";
 import useStyles from "./styles.js";
@@ -23,26 +25,14 @@ function Navbar() {
     navigate("/");
   };
 
-  // useEffect(() => {
-  //   const token = User?.token;
-
-  //   //so basically, this handles what happens when the jwt authorization token expires
-  //   if (token) {
-  //     const decodedToken = decode(token);
-  //     if (decodedToken.exp * 1000 < new Date().getTime().toIso()) logOutUser();
-  //     return;
-  //   }
-
-  //   signUpUserSuccess(JSON.parse(localStorage.getItem("profile")));
-  // }, [Location]);
-
   return (
-    <Stack
-      display="flex"
+    <Card
+      elevation={6}
       direction="row"
       color="secondary "
       className={classes.appBar}
       position="static"
+      raised
     >
       <div className={classes.brandContainer}>
         <Typography
@@ -91,12 +81,12 @@ function Navbar() {
             </Stack>
           </div>
         ) : (
-          <Button contained component={Link} to="/auth" color="primary">
+          <Button component={Link} to="/auth" color="primary">
             Signin
           </Button>
         )}
       </Toolbar>
-    </Stack>
+    </Card>
   );
 }
 

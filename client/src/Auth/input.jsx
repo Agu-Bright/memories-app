@@ -38,7 +38,7 @@ function Input({
                   </InputAdornment>
                 ),
               }
-            : null
+            : ""
         }
       />
     </Grid>

@@ -39,7 +39,6 @@ function Home() {
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
 
-  console.log(posts);
   const handleKeyPress = (e) => {
     if (e.keyCode === 13) {
       //search post
@@ -58,6 +57,7 @@ function Home() {
       //logic to fetch searched post
 
       dispatch(fetchPostBySearch({ search, tags: tags.join(",") }));
+
       navigate(
         `/posts/search?searchQuery=${search || "none"}&tags=${
           tags.join(".") || "none"
@@ -114,9 +114,11 @@ function Home() {
               </Button>
             </AppBar>
             <Form />
-            <Paper className={classes.pagination} elevation={6}>
-              <Paginate />
-            </Paper>
+            {!searchQuery && !tags.length && (
+              <Paper className={classes.pagination} elevation={6}>
+                <Paginate page={page} />
+              </Paper>
+            )}
           </Grid>
         </Grid>
       </Container>

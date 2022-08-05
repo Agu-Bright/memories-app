@@ -1,14 +1,31 @@
 const reducer = (state, action) => {
   switch (action.type) {
+    case "SET_LOADING_TRUE":
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case "SET_LOADING_FALSE":
+      return {
+        ...state,
+        isLoading: false,
+      };
     case "SET_MOUNT_TRUE":
       return {
         ...state,
-        mount: true,
+        mount: !state.mount,
       };
     case "FETCH_ALL":
       return {
         ...state,
-        posts: action.payload,
+        posts: action.payload.data,
+        currentPage: action.payload.currentPage,
+        numberOfPages: action.payload.numberOfPages,
+      };
+    case "SET_POST_DATA":
+      return {
+        ...state,
+        post: action.payload,
       };
     case "FETCH_POSTS_BY_SEARCH":
       return {

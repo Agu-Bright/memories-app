@@ -57,7 +57,12 @@ const Form = () => {
   }
 
   return (
-    <Paper direction="column" spacing={2} className={classes.paper}>
+    <Paper
+      direction="column"
+      spacing={2}
+      className={classes.paper}
+      elevation={6}
+    >
       <form
         autoComplete="off"
         noValidate

@@ -98,7 +98,9 @@ function Auth() {
                   half
                 />
               </>
-            ) : null}
+            ) : (
+              ""
+            )}
 
             <Input
               name="email"
@@ -126,7 +128,9 @@ function Auth() {
                   type="password"
                 />
               </>
-            ) : null}
+            ) : (
+              ""
+            )}
           </Stack>
           {/* <GoogleLogin
             clientId="351861005954-9miu8co8otiue6bos6js44ofj8qo2ca0.apps.googleusercontent.com"

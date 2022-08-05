@@ -114,8 +114,24 @@ export const setCurrentID = (id) => {
   };
 };
 
-export const setMountTrue = () => {
+export const setMount = () => {
   return {
     type: "SET_MOUNT_TRUE",
+  };
+};
+export const startLoading = () => {
+  return {
+    type: "SET_LOADING_TRUE",
+  };
+};
+export const endLoading = () => {
+  return {
+    type: "SET_LOADING_FALSE",
+  };
+};
+export const setPost = (data) => {
+  return {
+    type: "SET_POST_DATA",
+    payload: data,
   };
 };
